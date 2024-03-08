@@ -78,6 +78,7 @@ for round in range(num_iterations):
         np.save(f'data/{W}x{H}/m/{round//iterations_per_frame:06d}', m)
         np.save(f'data/{W}x{H}/q/{round//iterations_per_frame:06d}', q)
         np.save(f'data/{W}x{H}/phi/{round//iterations_per_frame:06d}', phi)
+        print(f'finished frame {round//iterations_per_frame:06d}')
 
 thetas = [np.load(f'data/{W}x{H}/theta/{i:06d}.npy').reshape((H,W)) for i in range(num_frames)]
 ms = [np.load(f'data/{W}x{H}/m/{i:06d}.npy') for i in range(num_frames)]
