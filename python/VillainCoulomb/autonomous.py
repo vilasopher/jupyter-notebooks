@@ -2,6 +2,7 @@ import numpy as np
 import numpy.random as ra
 import numpy.linalg as la
 import matplotlib.pyplot as plt
+import time
 
 W = 64
 H = 64
@@ -32,6 +33,9 @@ dstar2 = np.load(f'data/{W}x{H}/matrices/dstar2.npy')
 L0 = np.load(f'data/{W}x{H}/matrices/L0.npy')
 L1 = np.load(f'data/{W}x{H}/matrices/L1.npy')
 L2 = np.load(f'data/{W}x{H}/matrices/L2.npy')
+
+print('starting clock...')
+starttime = time.time()
 
 # generate all data
 
@@ -78,7 +82,8 @@ for round in range(num_iterations):
         np.save(f'data/{W}x{H}/m/{round//iterations_per_frame:06d}', m)
         np.save(f'data/{W}x{H}/q/{round//iterations_per_frame:06d}', q)
         np.save(f'data/{W}x{H}/phi/{round//iterations_per_frame:06d}', phi)
-        print(f'finished frame {round//iterations_per_frame:06d}')
+
+        print(f'finished frame {round//iterations_per_frame:06d} in time {time.time() - starttime}')
 
 thetas = [np.load(f'data/{W}x{H}/theta/{i:06d}.npy').reshape((H,W)) for i in range(num_frames)]
 ms = [np.load(f'data/{W}x{H}/m/{i:06d}.npy') for i in range(num_frames)]
