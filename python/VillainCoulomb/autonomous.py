@@ -8,13 +8,22 @@ from datetime import timedelta
 W = 64
 H = 64
 
-num_frames = 3000
+num_frames = 6000
 iterations_per_frame = 1024
 num_iterations = num_frames * iterations_per_frame
 
 eee = np.exp(np.exp(np.e-1)-1)-1
 def beta_function(iteration):
     return np.log(np.log(np.log(iteration * eee / num_iterations + 1) + 1) + 1)
+
+def beta_function_2a(iteration):
+    return 2*beta_function(3000) - beta_function(6000-iteration)
+
+def beta_function_2b(iteration):
+    return 10*beta_function(3000) - 9*beta_function(6000-iteration)
+
+def beta_function_2(iteration):
+    return (6000-iteration)/3000 * beta_function_2a(iteration) + (iteration-3000)/3000 * beta_function_2b(iteration)
 
 vertices = [(vr, vc) for vr in range(H) for vc in range(W)]
 numv = len(vertices)
@@ -45,8 +54,8 @@ beta = beta_function(1)
 theta = 2*np.pi*ra.random(numv)
 m = np.round(ra.normal(- d0 @ theta / (2*np.pi), 1/(2*np.pi*np.sqrt(beta))))
 
-theta = np.load(f'data/64x64/theta/000433.npy')
-m = np.load(f'data/64x64/m/000433.npy')
+theta = np.load(f'data/64x64/theta/002999.npy')
+m = np.load(f'data/64x64/m/002999.npy')
 
 def Hamiltonian(t,m):
     return np.sum((d0 @ t + 2*np.pi*m)**2)/2
@@ -56,9 +65,9 @@ Hnew = 0
 
 ad = np.abs(d0)
 
-for round in range(434 * iterations_per_frame, num_iterations):
+for round in range(3000 * iterations_per_frame, num_iterations):
 
-    beta = beta_function(round+1)
+    beta = beta_function_2(round+1)
     
     changedvertices = np.zeros(numv)
     changedvertices[ra.randint(numv)] = 1
@@ -130,7 +139,7 @@ for i in range(num_iterations//iterations_per_frame):
     qv1 = pviewer.scatter(qx, qy, c=qc, marker='o', s=25, vmin = -2, vmax = 2, cmap='seismic')
     qv2 = tviewer.scatter(qx, qy, c=qc, marker='o', s=25, vmin = -2, vmax = 2, cmap='seismic', edgecolors='black')
 
-    fig.text(0.4, 0.05, f'temperature = {1/beta_function((i+1)*iterations_per_frame):.5f}')
+    fig.text(0.45, 0.05, f'temperature = {1/beta_function((i+1)*iterations_per_frame):.5f}')
     plt.tight_layout()
     plt.savefig(f'images/{W}x{H}/{i:06d}.png', bbox_inches='tight')
     plt.close('all')
