@@ -4,6 +4,7 @@ import numpy.linalg as la
 import matplotlib.pyplot as plt
 import time
 from datetime import timedelta
+from tqdm import tqdm
 
 W = 64
 H = 64
@@ -65,7 +66,7 @@ Hnew = 0
 
 ad = np.abs(d0)
 
-for round in range(3000 * iterations_per_frame, num_iterations):
+for round in tqdm(range(3000 * iterations_per_frame, num_iterations)):
 
     beta = beta_function_2(round+1)
     
@@ -96,7 +97,7 @@ for round in range(3000 * iterations_per_frame, num_iterations):
         np.save(f'data/{W}x{H}/q/{round//iterations_per_frame:06d}', q)
         np.save(f'data/{W}x{H}/phi/{round//iterations_per_frame:06d}', phi)
 
-        print(f'finished frame {round//iterations_per_frame:06d} in time {str(timedelta(seconds=time.time()-starttime))}')
+        #print(f'finished frame {round//iterations_per_frame:06d} in time {str(timedelta(seconds=time.time()-starttime))}')
 
 thetas = [np.load(f'data/{W}x{H}/theta/{i:06d}.npy').reshape((H,W)) for i in range(num_frames)]
 ms = [np.load(f'data/{W}x{H}/m/{i:06d}.npy') for i in range(num_frames)]
@@ -104,7 +105,7 @@ qs = [np.load(f'data/{W}x{H}/q/{i:06d}.npy').reshape((H-1,W-1)) for i in range(n
 phis = [np.load(f'data/{W}x{H}/phi/{i:06d}.npy').reshape((H,W)) for i in range(num_frames)]
 
 
-for i in range(num_iterations//iterations_per_frame):
+for i in tqdm(range(num_iterations//iterations_per_frame)):
     fig, (tviewer, pviewer) = plt.subplots(1, 2, figsize=(16,8))
     tviewer.axes.get_yaxis().set_visible(False)
     tviewer.axes.get_xaxis().set_visible(False)
