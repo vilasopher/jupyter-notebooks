@@ -55,8 +55,8 @@ beta = beta_function(1)
 theta = 2*np.pi*ra.random(numv)
 m = np.round(ra.normal(- d0 @ theta / (2*np.pi), 1/(2*np.pi*np.sqrt(beta))))
 
-theta = np.load(f'data/64x64/theta/002999.npy')
-m = np.load(f'data/64x64/m/002999.npy')
+theta = np.load(f'data/64x64/theta/003185.npy')
+m = np.load(f'data/64x64/m/003185.npy')
 
 def Hamiltonian(t,m):
     return np.sum((d0 @ t + 2*np.pi*m)**2)/2
@@ -66,38 +66,37 @@ Hnew = 0
 
 ad = np.abs(d0)
 
-for round in tqdm(range(3000 * iterations_per_frame, num_iterations)):
+for frame in tqdm(range(3186, num_frames)):
 
-    beta = beta_function_2(round+1)
+    for round in tqdm(range(frame * iterations_per_frame, (frame+1) * iterations_per_frame)):
+
+        beta = beta_function_2(round+1)
+        
+        changedvertices = np.zeros(numv)
+        changedvertices[ra.randint(numv)] = 1
+        fixedvertices = 1 - changedvertices
+        changededges = ad @ changedvertices
+        changededges[changededges != 0] = 1
+        fixededges = 1 - changededges
+
+        proptheta = theta * fixedvertices + 2*np.pi*ra.random(numv) * changedvertices
+        propm = m * fixededges + np.round(ra.normal(-d0 @ proptheta / (2*np.pi), 1/(2*np.pi*np.sqrt(beta)))) * changededges
+
+        Hnew = Hamiltonian(proptheta, propm)
+
+        if ra.random() < np.exp(- beta * (Hnew - Hold)):
+            theta = proptheta
+            m = propm
+            Hold = Hnew
     
-    changedvertices = np.zeros(numv)
-    changedvertices[ra.randint(numv)] = 1
-    fixedvertices = 1 - changedvertices
-    changededges = ad @ changedvertices
-    changededges[changededges != 0] = 1
-    fixededges = 1 - changededges
-
-    proptheta = theta * fixedvertices + 2*np.pi*ra.random(numv) * changedvertices
-    propm = m * fixededges + np.round(ra.normal(-d0 @ proptheta / (2*np.pi), 1/(2*np.pi*np.sqrt(beta)))) * changededges
-
-    Hnew = Hamiltonian(proptheta, propm)
-
-    if ra.random() < np.exp(- beta * (Hnew - Hold)):
-        theta = proptheta
-        m = propm
-        Hold = Hnew
-    
-    if (round+1) % iterations_per_frame == 0:
-        q = d1 @ m
-        nq = la.lstsq(d1, q, rcond=None)[0]
-        psi = la.lstsq(d0, m-nq, rcond=None)[0]
-        phi = theta + 2*np.pi*psi + 2*np.pi*(dstar1 @ la.lstsq(L1, nq, rcond=None)[0])
-        np.save(f'data/{W}x{H}/theta/{round//iterations_per_frame:06d}', theta)
-        np.save(f'data/{W}x{H}/m/{round//iterations_per_frame:06d}', m)
-        np.save(f'data/{W}x{H}/q/{round//iterations_per_frame:06d}', q)
-        np.save(f'data/{W}x{H}/phi/{round//iterations_per_frame:06d}', phi)
-
-        #print(f'finished frame {round//iterations_per_frame:06d} in time {str(timedelta(seconds=time.time()-starttime))}')
+    q = d1 @ m
+    nq = la.lstsq(d1, q, rcond=None)[0]
+    psi = la.lstsq(d0, m-nq, rcond=None)[0]
+    phi = theta + 2*np.pi*psi + 2*np.pi*(dstar1 @ la.lstsq(L1, nq, rcond=None)[0])
+    np.save(f'data/{W}x{H}/theta/{frame:06d}', theta)
+    np.save(f'data/{W}x{H}/m/{frame:06d}', m)
+    np.save(f'data/{W}x{H}/q/{frame:06d}', q)
+    np.save(f'data/{W}x{H}/phi/{frame:06d}', phi)
 
 thetas = [np.load(f'data/{W}x{H}/theta/{i:06d}.npy').reshape((H,W)) for i in range(num_frames)]
 ms = [np.load(f'data/{W}x{H}/m/{i:06d}.npy') for i in range(num_frames)]
