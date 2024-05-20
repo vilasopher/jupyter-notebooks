@@ -55,8 +55,11 @@ beta = beta_function(1)
 theta = 2*np.pi*ra.random(numv)
 m = np.round(ra.normal(- d0 @ theta / (2*np.pi), 1/(2*np.pi*np.sqrt(beta))))
 
-theta = np.load(f'data/64x64/theta/003185.npy')
-m = np.load(f'data/64x64/m/003185.npy')
+last_completed_frame = 4749
+
+if last_completed_frame > -1:
+    theta = np.load(f'data/64x64/theta/{last_completed_frame:06d}.npy')
+    m = np.load(f'data/64x64/m/{last_completed_frame:06d}.npy')
 
 def Hamiltonian(t,m):
     return np.sum((d0 @ t + 2*np.pi*m)**2)/2
@@ -66,9 +69,9 @@ Hnew = 0
 
 ad = np.abs(d0)
 
-for frame in tqdm(range(3186, num_frames)):
+for frame in tqdm(range(last_completed_frame+1, num_frames)):
 
-    for round in tqdm(range(frame * iterations_per_frame, (frame+1) * iterations_per_frame)):
+    for round in tqdm(range(frame * iterations_per_frame, (frame+1) * iterations_per_frame), leave=False):
 
         beta = beta_function_2(round+1)
         
