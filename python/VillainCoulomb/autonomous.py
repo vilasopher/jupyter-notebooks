@@ -55,7 +55,7 @@ beta = beta_function(1)
 theta = 2*np.pi*ra.random(numv)
 m = np.round(ra.normal(- d0 @ theta / (2*np.pi), 1/(2*np.pi*np.sqrt(beta))))
 
-last_completed_frame = 4893
+last_completed_frame = 5501
 
 if last_completed_frame > -1:
     theta = np.load(f'data/64x64/theta/{last_completed_frame:06d}.npy')
