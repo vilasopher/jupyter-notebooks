@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 N = 512
 F = 3000
 I = 100
-L = 150
+L = -1
 S = 0.05
 
 
@@ -50,7 +50,7 @@ def beta(x):
         return g(x) * (1-i2(x)) + h(x) * i2(x)
     
 
-# Run simulation (slow)
+# Run simulation and generate images (slow)
 
 if L > -1:
     theta = np.load(f'data/{L:06d}.npy').reshape((N,N))
@@ -64,12 +64,6 @@ for frame in tqdm(range(L+1, F)):
             for j in range(N):
                 if to_update[i,j]:
                     MetropolisUpdate(i,j,beta=beta(frame/F))
-    np.save(f'data/{frame:06d}.npy',theta)
 
-
-# Generate images for video (slow)
-
-thetas = [np.load(f'data/{i:06d}.npy').reshape((N,N)) for i in range(3000)]
-
-for frame in tqdm(range(3000)):
-    plt.imsave(f'images/{frame:06d}.png', thetas[frame], format='png', cmap='hsv', vmin=0, vmax=2*np.pi)
+    np.save(f'data/{frame:06d}.npy', theta)
+    plt.imsave(f'images/{frame:06d}.png', theta, format='png', cmap='hsv', vmin=0, vmax=2*np.pi)
