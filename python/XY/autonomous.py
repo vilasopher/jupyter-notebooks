@@ -57,7 +57,7 @@ if L > -1:
 else:
     theta = ra.uniform(0,2*np.pi,size=(N,N))
 
-for frame in tqdm(range(F)):
+for frame in tqdm(range(L+1, F)):
     for _ in tqdm(range(I), leave=False):
         to_update = ra.uniform(0,1,size=(N,N)) < 0.05
         for i in range(N):
