@@ -4,6 +4,7 @@ import numpy as np
 import numpy.random as ra
 from tqdm import tqdm
 import matplotlib.pyplot as plt
+import colorcet as cc
 
 
 # Set N = side-length, F = number of frames, I = iterations per frame, L = last completed frame, and S = update density
@@ -65,4 +66,4 @@ for frame in tqdm(range(L+1, F)):
                     MetropolisUpdate(i,j,beta=b)
 
     np.save(f'circledata/{frame:06d}.npy',theta)
-    plt.imsave(f'circleimages/{frame:06d}.png', theta, format='png', cmap='hsv', vmin=-np.pi, vmax=np.pi)
+    plt.imsave(f'circleimages/{frame:06d}.png', theta, format='png', cmap=cc.m_cyclic_rygcbmr_50_90_c64, vmin=-np.pi, vmax=np.pi)
