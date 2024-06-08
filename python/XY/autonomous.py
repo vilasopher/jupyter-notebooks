@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 # Set N = side-length, F = number of frames, I = iterations per frame, L = last completed frame, and S = update density
 N = 512
 F = 3000
-I = 100
+I = 200
 L = -1
 S = 0.05
 
@@ -37,18 +37,7 @@ def MetropolisUpdate(i,j,beta=1.1343):
         theta[i,j] = proptheta
 
 
-f = lambda x : np.sqrt(12*x)
-g = lambda x : 1.1343 + 0.01*(x-0.5)
-h = lambda x : 5-12*np.sqrt(1-x)
-i1 = lambda x : max(0,min(1,10*(x-0.1)+1))
-i2 = lambda x : max(0,min(1,10*(x-0.9)))
-
-def beta(x):
-    if x < 0.5:
-        return f(x) * (1-i1(x)) + g(x) * i1(x)
-    else:
-        return g(x) * (1-i2(x)) + h(x) * i2(x)
-    
+beta = lambda x : 1.1343 + 15 * (1+100*x**6) * (x-1/3)**3
 
 # Run simulation and generate images (slow)
 
