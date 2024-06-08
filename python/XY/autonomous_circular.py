@@ -40,7 +40,7 @@ def MetropolisUpdate(i,j,beta=1.1343):
         theta[i,j] = proptheta
 
 
-beta = lambda x : 1.1343 + 15 * (1+100*x**6) * (x-1/3)**3
+beta = lambda x : 1.1343 + 200 * (1+20*x**4) * (x-1/3)**5
 
 
 # Run simulation (slow)
