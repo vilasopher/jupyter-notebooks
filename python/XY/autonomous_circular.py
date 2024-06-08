@@ -47,7 +47,7 @@ beta = lambda x : 1.1343 + 150 * (1+50*x**8) * (x-1/3)**5
 # Run simulation (slow)
 
 if L > -1:
-    theta = np.load(f'hexdata/{L:06d}.npy').reshape((N,N))
+    theta = np.load(f'circledata/{L:06d}.npy').reshape((N,N))
 else:
     theta = ra.uniform(-np.pi,np.pi,size=(N,N))
     for i in range(N):
