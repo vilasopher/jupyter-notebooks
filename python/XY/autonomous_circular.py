@@ -11,7 +11,7 @@ import colorcet as cc
 N = 512
 F = 3000
 I = 500
-L = 435
+L = 469
 S = 0.05
 
 
@@ -20,7 +20,7 @@ S = 0.05
 theta = None
 
 def InsideCircleSlow(i,j):
-    return (i+0.5-0.5*N)**2 + (j+0.5-0.5*N)**2 <= (0.5*N - 16)**2
+    return (i+0.5-0.5*N)**2 + (j+0.5-0.5*N)**2 <= (0.5*N - 8)**2
 
 InsideCircleFast = np.array([[InsideCircleSlow(i,j) for i in range(N)] for j in range(N)])
 
