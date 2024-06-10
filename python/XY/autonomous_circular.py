@@ -11,7 +11,7 @@ import colorcet as cc
 N = 512
 F = 3000
 I = 500
-L = 1631
+L = 1712
 S = 0.05
 
 
