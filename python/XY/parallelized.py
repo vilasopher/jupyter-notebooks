@@ -12,10 +12,10 @@ from multiprocessing import shared_memory
 # Set constants
 
 N = 512 # Side-length of square 
-F = 300 # Number of frames
-I = 50 # Number of iterations per frame
+F = 3000 # Number of frames
+I = 500 # Number of iterations per frame
 L = -1 # Last completed frame
-S = 0.1 # Proportion of resampled spins per pass
+S = 0.05 # Proportion of resampled spins per pass
 IRO = 10 # Inner radius offset (try to make N-2*IRO divisible by the number of cores)
 
 # Inverse temperature, as a function of progress (from 0 to 1)
@@ -52,11 +52,11 @@ def MetropolisUpdate(theta,i,j,beta=1.1343):
     if ra.uniform(0,1) < np.exp(- beta * (Hloc(theta,i,j,proptheta) - Hloc(theta,i,j,theta[i,j]))):
         theta[i,j] = proptheta
 
-def worker(shm_name, start, end, beta):
+def worker(core, shm_name, start, end, beta):
     existing_shm = shared_memory.SharedMemory(name=shm_name)
-    shared_theta = np.ndarray((N,N), dtype=np.float64, buffer=existing_shm)
+    shared_theta = np.ndarray((N,N), dtype=np.float64, buffer=existing_shm.buf)
 
-    for iteration in tqdm(range(I), leave=False):
+    for iteration in tqdm(range(I), position=1, leave=False) if core == 0 else range(I):
         for i in range(start,end) if iteration % 2 == 0 else range(end-1,start-1,-1):
             for j in range(N) if iteration % 4 < 2 else range(N-1,-1,-1):
                 if InsideInnerCircle(i,j) and ra.uniform(0,1) < S:
@@ -92,17 +92,23 @@ def main():
         for c in range(num_cores):
             start = IRO + c * chunk_size
             end = IRO + (c+1) * chunk_size if c < num_cores-1 else N-IRO
-            p = mp.Process(target=worker, args=(shm.name, start, end, b))
+            p = mp.Process(target=worker, args=(c, shm.name, start, end, b))
             processes.append(p)
             p.start()
 
         for p in processes:
             p.join()
 
-        print('Saving data... Please do not turn the power off...', end='', flush=True)
+        #print('\033[12A', end='')
+        print('Saving data... Please do not turn the power off...', end='')
+        np.copyto(theta, shared_theta)
         np.save(f'paralleldata/{frame:06d}.npy',theta)
         plt.imsave(f'parallelimages/{frame:06d}.png', theta, format='png', cmap=cmap, vmin=-np.pi, vmax=np.pi)
-        print('\r', end='')
+        print('\033[1A', end='')
     
     shm.close()
     shm.unlink()
+
+
+if __name__ == '__main__':
+    main()
