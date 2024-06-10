@@ -12,11 +12,11 @@ from multiprocessing import shared_memory
 # Set constants
 
 N = 512 # Side-length of square 
-F = 3000 # Number of frames
-I = 500 # Number of iterations per frame
+F = 300 # Number of frames
+I = 50 # Number of iterations per frame
 L = -1 # Last completed frame
 S = 0.1 # Proportion of resampled spins per pass
-IRO = 8 # Inner radius offset
+IRO = 10 # Inner radius offset (try to make N-2*IRO divisible by the number of cores)
 
 # Inverse temperature, as a function of progress (from 0 to 1)
 beta = lambda x : 1.1343 + 150 * (1+50*x**8) * (x-1/3)**5 
@@ -99,8 +99,10 @@ def main():
         for p in processes:
             p.join()
 
+        print('Saving data... Please do not turn the power off...', end='', flush=True)
         np.save(f'paralleldata/{frame:06d}.npy',theta)
         plt.imsave(f'parallelimages/{frame:06d}.png', theta, format='png', cmap=cmap, vmin=-np.pi, vmax=np.pi)
+        print('\r', end='')
     
     shm.close()
     shm.unlink()
