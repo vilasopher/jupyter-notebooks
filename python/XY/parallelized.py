@@ -11,12 +11,12 @@ from multiprocessing import shared_memory
 
 # Set constants
 
-N = 1000 # Side-length of square 
+N = 512 # Side-length of square 
 F = 3000 # Number of frames
 I = 1000 # Number of iterations per frame
 L = -1 # Last completed frame
-S = 0.1 # Proportion of resampled spins per pass
-IRO = 20 # Inner radius offset (try to make N-2*IRO divisible by the number of cores)
+S = 0.05 # Proportion of resampled spins per pass
+IRO = 10 # Inner radius offset (try to make N-2*IRO divisible by the number of cores)
 
 # Inverse temperature, as a function of progress (from 0 to 1)
 beta = lambda x : 1.1343 + 150 * (1+50*x**8) * (x-1/3)**5 
