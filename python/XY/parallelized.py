@@ -14,7 +14,7 @@ from multiprocessing import shared_memory
 N = 1000 # Side-length of square 
 F = 3000 # Number of frames
 I = 1000 # Number of iterations per frame
-L = 608 # Last completed frame
+L = 1554 # Last completed frame
 S = 0.1 # Proportion of resampled spins per pass
 IRO = 20 # Inner radius offset (try to make N-2*IRO divisible by the number of cores)
 
